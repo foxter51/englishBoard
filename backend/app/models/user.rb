@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
+# Represents the User model
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
-  
   field :name, type: String
   field :string, type: String
   field :email, type: String
