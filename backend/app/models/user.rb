@@ -5,9 +5,12 @@ class User
   include Mongoid::Document
   include Mongoid::Timestamps
   field :name, type: String
-  field :string, type: String
   field :email, type: String
   field :password_diggest, type: String
+
+  validates :name, length: { minimum: 3, maximum: 64 }, presence: true
+  validates :email, uniqueness: true, presence: true
+  validates :password, length: { minimum: 6, maximum: 64 }, presence: true
 
   attr_accessor :password
 
