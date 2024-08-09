@@ -13,20 +13,18 @@ class AuthenticationController < ApplicationController
     else
       render json: { error: 'unauthorized' }, status: :unauthorized
     end
+  rescue Mongoid::Errors::InvalidFind, Mongoid::Errors::DocumentNotFound
+    render json: { error: 'User not found' }, status: :unauthorized
   end
 
   def register
-    if User.exists?(email: params[:email])
-      render json: { error: 'User already exists' }, status: :conflict
+    @user = User.new(user_params)
+    if @user.save
+      token = jwt_encode(user_id: @user.id)
+      time = Time.now + 24.hours.to_i
+      render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :created
     else
-      @user = User.new(user_params)
-      if @user.save
-        token = jwt_encode(user_id: @user.id)
-        time = Time.now + 24.hours.to_i
-        render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :created
-      else
-        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
-      end
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
