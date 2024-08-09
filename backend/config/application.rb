@@ -35,5 +35,14 @@ module Backend
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.generators do |g|
+      g.test_framework nil
+      g.helper false
+      g.assets false
+      g.template_engine nil
+      g.jbuilder false
+      g.fixture_replacement nil
+    end
   end
 end
