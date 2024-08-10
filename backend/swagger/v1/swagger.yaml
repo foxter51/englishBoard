@@ -1,0 +1,309 @@
+---
+openapi: 3.0.1
+info:
+  title: EngBoard API V1
+  version: v1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- BearerAuth: []
+paths:
+  "/auth/login":
+    post:
+      summary: Login
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/auth/register":
+    post:
+      summary: Register
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+  "/cards/user/{user_id}":
+    parameters:
+    - name: user_id
+      in: path
+      description: user_id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List all user cards by status
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: remembered
+        in: query
+        required: true
+        description: Filter cards by remembered status
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: successful
+  "/cards":
+    get:
+      summary: List all cards
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: Create a card
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                description:
+                  type: string
+                remembered:
+                  type: boolean
+              required:
+              - word
+              - description
+  "/cards/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a card
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: Partial update a card
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                description:
+                  type: string
+                remembered:
+                  type: boolean
+    put:
+      summary: Full update a card
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                word:
+                  type: string
+                description:
+                  type: string
+                remembered:
+                  type: boolean
+              required:
+              - word
+              - description
+              - remembered
+    delete:
+      summary: Delete a card
+      tags:
+      - Cards
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+  "/users":
+    get:
+      summary: List all users
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: Create a user
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+  "/users/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a user
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: Partial update a user
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+    put:
+      summary: Full update a user
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+    delete:
+      summary: Delete a user
+      tags:
+      - Users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: successful
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000/
