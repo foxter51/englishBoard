@@ -7,6 +7,7 @@ class User
   field :name, type: String
   field :email, type: String
   field :password_diggest, type: String
+  has_many :cards
 
   validates :name, length: { minimum: 3, maximum: 64 }, presence: true
   validates :email, uniqueness: true, presence: true
