@@ -13,6 +13,7 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
 require "rails/test_unit/railtie"
+require_relative '../lib/custom_formatter'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -35,6 +36,9 @@ module Backend
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.logger = ActiveSupport::Logger.new("log/#{Rails.env}.log", 'daily')
+    config.logger.formatter = CustomFormatter.new
 
     config.generators do |g|
       g.test_framework nil
