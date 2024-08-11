@@ -16,6 +16,7 @@ class ApplicationController < ActionController::API
         user_id = @decoded[:user_id]
         if user_id
           @current_user = User.find(user_id)
+          Rails.logger.info("Authenticated user: #{@current_user.email}")
         else
           render json: { error: 'Invalid token: user_id not found' }, status: :unauthorized
         end

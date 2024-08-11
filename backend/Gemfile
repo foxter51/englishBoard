@@ -4,6 +4,8 @@ ruby "3.3.4"
 
 gem 'bcrypt'
 
+gem 'lograge'
+
 gem 'mongoid'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -19,6 +21,8 @@ gem "puma", ">= 5.0"
 gem "importmap-rails"
 
 gem 'rack-cors'
+
+gem 'rainbow'
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
