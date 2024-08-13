@@ -35,8 +35,11 @@ gem "jbuilder"
 
 gem 'jwt'
 
-# Use Redis adapter to run Action Cable in production
-gem "redis", ">= 4.0.1"
+gem 'redis-rack-cache'
+
+gem 'redis-rails'
+
+gem 'redis-namespace'
 
 gem 'rspec-rails'
 

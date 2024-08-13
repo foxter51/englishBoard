@@ -2,10 +2,11 @@
 
 # Represents the cards controller
 class CardsController < ApplicationController
+  include CardHelper
   before_action :set_card, only: %i[show update destroy]
 
   def index
-    @cards = Card.all
+    @cards = fetching_cards
     Rails.logger.info("Cards found count: #{@cards.size}")
     render json: @cards
   end
@@ -16,7 +17,7 @@ class CardsController < ApplicationController
       render json: { error: 'Missing user_id or remembered parameter' }, status: :bad_request
     else
       remembered = ActiveModel::Type::Boolean.new.cast(params[:remembered])
-      @cards = Card.where(user_id: params[:user_id], remembered: remembered)
+      @cards = fetching_cards_by_user_and_status(params[:user_id], remembered)
       Rails.logger.info("Cards by user and status found count: #{@cards.size}")
       render json: @cards
     end
