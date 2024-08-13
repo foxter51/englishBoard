@@ -2,10 +2,11 @@
 
 # Represents the users controller
 class UsersController < ApplicationController
+  include UserHelper
   before_action :set_user, only: %i[show update destroy]
 
   def index
-    @users = User.all
+    @users = fetching_users
     Rails.logger.info("Users found count: #{@users.size}")
     render json: @users
   end

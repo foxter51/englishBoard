@@ -40,6 +40,8 @@ module Backend
     config.logger = ActiveSupport::Logger.new("log/#{Rails.env}.log", 'daily')
     config.logger.formatter = CustomFormatter.new
 
+    config.cache_store = :redis_store, 'redis://localhost:6379/0/cache', { expires_in: 15.seconds, size: 15.megabytes }
+
     config.generators do |g|
       g.test_framework nil
       g.helper false
