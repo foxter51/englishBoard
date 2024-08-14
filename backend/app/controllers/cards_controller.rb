@@ -64,6 +64,6 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.require(:card).permit(:word, :description, :remembered)
+    params.require(:card).permit(:word, :description, :remembered, :image)
   end
 end
