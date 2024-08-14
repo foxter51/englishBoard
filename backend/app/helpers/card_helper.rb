@@ -2,23 +2,19 @@
 
 # Represents the card helper
 module CardHelper
+  include RedisConnection
+
+  protected
+
   def fetching_cards
-    cards = $redis.get('all_cards') rescue StandardError
-    if cards.nil?
-      cards = Card.all.to_json
-      $redis.set('all_cards', cards)
-      $redis.expire('all_cards', 15.seconds.to_i)
+    fetch_or_cache('all_cards') do
+      Card.all.to_json
     end
-    JSON.parse(cards)
   end
 
   def fetching_cards_by_user_and_status(user_id, remembered)
-    cards = $redis.get("cards_user_#{user_id}_remembered_#{remembered}") rescue StandardError
-    if cards.nil?
-      cards = Card.where(user_id:, remembered:).to_json
-      $redis.set("cards_user_#{user_id}_remembered_#{remembered}", cards)
-      $redis.expire("cards_user_#{user_id}_remembered_#{remembered}", 15.seconds.to_i)
+    fetch_or_cache("cards_user_#{user_id}_remembered_#{remembered}") do
+      Card.where(user_id: user_id, remembered: remembered).to_json
     end
-    JSON.parse(cards)
   end
 end

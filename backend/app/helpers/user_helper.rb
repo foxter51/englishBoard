@@ -2,13 +2,13 @@
 
 # Represents the user helper
 module UserHelper
+  include RedisConnection
+
+  protected
+
   def fetching_users
-    users = $redis.get('all_users') rescue StandardError
-    if users.nil?
-      users = User.all.to_json
-      $redis.set('all_users', users)
-      $redis.expire('all_users', 15.seconds.to_i)
+    fetch_or_cache('all_users') do
+      User.all.to_json
     end
-    JSON.parse(users)
   end
 end
