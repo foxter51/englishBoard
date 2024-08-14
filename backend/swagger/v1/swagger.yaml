@@ -115,9 +115,12 @@ paths:
                   type: string
                 remembered:
                   type: boolean
+                image:
+                  type: string
               required:
               - word
               - description
+              - image
   "/cards/{id}":
     parameters:
     - name: id
@@ -157,6 +160,8 @@ paths:
                   type: string
                 remembered:
                   type: boolean
+                image:
+                  type: string
     put:
       summary: Full update a card
       tags:
@@ -179,10 +184,13 @@ paths:
                   type: string
                 remembered:
                   type: boolean
+                image:
+                  type: string
               required:
               - word
               - description
               - remembered
+              - image
     delete:
       summary: Delete a card
       tags:
