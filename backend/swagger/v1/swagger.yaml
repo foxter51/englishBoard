@@ -283,6 +283,8 @@ paths:
                   type: string
                 password:
                   type: string
+                avatar:
+                  type: string
     put:
       summary: Full update a user
       tags:
