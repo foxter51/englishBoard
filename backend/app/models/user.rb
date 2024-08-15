@@ -10,9 +10,12 @@ class User
   field :avatar, type: String
   has_many :cards
 
+  field :learnt_cards_count, type: Integer, default: 0
+  field :to_learn_cards_count, type: Integer, default: 0
+
   validates :name, length: { minimum: 3, maximum: 64 }, presence: true
   validates :email, uniqueness: true, presence: true
-  validates :password, length: { minimum: 6, maximum: 64 }, presence: true
+  validates :password, length: { minimum: 6, maximum: 64 }, presence: true, if: :password_required?
 
   attr_accessor :password
 
@@ -23,6 +26,10 @@ class User
   end
 
   private
+
+  def password_required?
+    new_record? || password.present?
+  end
 
   def encrypt_password
     self.password_diggest = BCrypt::Password.create(password) if password.present?
