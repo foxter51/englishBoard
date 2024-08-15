@@ -54,10 +54,11 @@ RSpec.describe 'Cards API', type: :request do
           properties: {
             word: { type: :string },
             description: { type: :string },
+            transcription: { type: :string },
             remembered: { type: :boolean },
             image: { type: :string }
           },
-          required: %w[word description image]
+          required: %w[word description transcription image]
         }
 
         after do |example|
@@ -103,6 +104,7 @@ RSpec.describe 'Cards API', type: :request do
           properties: {
             word: { type: :string },
             description: { type: :string },
+            transcription: { type: :string },
             remembered: { type: :boolean },
             image: { type: :string }
           }
@@ -131,10 +133,11 @@ RSpec.describe 'Cards API', type: :request do
           properties: {
             word: { type: :string },
             description: { type: :string },
+            transcription: { type: :string },
             remembered: { type: :boolean },
             image: { type: :string }
           },
-          required: %w[word description remembered image]
+          required: %w[word description transcription remembered image]
         }
 
         let(:id) { '123' }
