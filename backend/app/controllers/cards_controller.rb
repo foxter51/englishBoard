@@ -28,7 +28,7 @@ class CardsController < ApplicationController
   end
 
   def create
-    @card = Card.new(card_params.merge(user_id: @current_user.id, remembered: false))
+    @card = @current_user.cards.new(card_params)
     if @card.save
       Rails.logger.info("Card created: #{@card.inspect}")
       render json: @card, status: :created
@@ -64,6 +64,6 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.require(:card).permit(:word, :description, :transcription, :remembered, :image)
+    params.require(:card).permit(:word, :description, :transcription, :remembered, :image).merge(user: @current_user)
   end
 end
