@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   post '/auth/login', to: 'authentication#login'
   post '/auth/register', to: 'authentication#register'
+  post '/auth/google_oauth2/callback', to: 'authentication#google_oauth2_callback'
+  get '/auth/logout', to: 'authentication#logout'
   resources :users
   resources :cards do
     collection do

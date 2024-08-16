@@ -8,6 +8,8 @@ class User
   field :email, type: String
   field :password_diggest, type: String
   field :avatar, type: String
+  field :provider, type: String, default: 'email'
+  field :uid, type: String
   has_many :cards
 
   field :learnt_cards_count, type: Integer, default: 0
@@ -19,16 +21,37 @@ class User
 
   attr_accessor :password
 
-  before_save :encrypt_password
+  before_save :encrypt_password, if: :provider == 'email'
 
   def authenticate(password)
     BCrypt::Password.new(password_diggest) == password
   end
 
+  def self.from_omniauth(auth)
+    user = find_by(provider: auth.provider, uid: auth.uid)
+
+    unless user
+      user = find_by(email: auth.info.email)
+      if user
+        user.update(uid: auth.uid) unless user.uid.present?
+      else
+        user = new(
+          provider: auth.provider,
+          uid: auth.uid,
+          email: auth.info.email,
+          name: auth.info.name,
+          avatar: auth.info.image
+        )
+        user.save
+      end
+    end
+    user
+  end
+
   private
 
   def password_required?
-    new_record? || password.present?
+    (new_record? && provider == 'email') || password.present?
   end
 
   def encrypt_password
