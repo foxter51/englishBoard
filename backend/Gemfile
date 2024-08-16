@@ -6,6 +6,8 @@ gem 'bcrypt'
 
 gem 'dotenv'
 
+gem 'google-id-token'
+
 gem 'lograge'
 
 gem 'mongoid'
@@ -36,12 +38,6 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 gem 'jwt'
-
-gem 'omniauth'
-
-gem 'omniauth-google-oauth2'
-
-gem 'omniauth-rails_csrf_protection'
 
 gem 'redis-rack-cache'
 
