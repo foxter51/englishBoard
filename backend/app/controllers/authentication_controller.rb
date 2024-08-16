@@ -31,15 +31,35 @@ class AuthenticationController < ApplicationController
   end
 
   def google_oauth2_callback
-    @user = User.from_omniauth(request.env['omniauth.auth'])
-    if @user.persisted?
-      token = jwt_encode(user_id: @user.id)
-      time = Time.now + 24.hours.to_i
-      Rails.logger.info("Authenticated user: #{@user.email}")
-      render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
+    token = params[:token].to_s
+    validator = GoogleIDToken::Validator.new
+    aud = ENV['GOOGLE_CLIENT_ID']
+    payload = validator.check(token, aud)
+
+    if payload['sub'].present?
+      @user = User.from_omniauth({
+                                   provider: 'google_oauth2',
+                                   uid: payload['sub'],
+                                   info: {
+                                     email: payload['email'],
+                                     name: payload['name'],
+                                     image: payload['picture']
+                                   }
+                                 })
+
+      if @user.persisted?
+        token = jwt_encode(user_id: @user.id)
+        time = Time.now + 24.hours.to_i
+        Rails.logger.info("Authenticated user: #{@user.email}")
+        render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
+      else
+        render json: @user.errors, status: :unprocessable_entity
+      end
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: { error: 'Invalid Google ID token' }, status: :unauthorized
     end
+  rescue GoogleIDToken::ValidationError => e
+    render json: { error: e.message }, status: :unauthorized
   end
 
   def logout
@@ -51,6 +71,6 @@ class AuthenticationController < ApplicationController
   private
 
   def user_params
-    params.require(:authentication).permit(:email, :password, :name)
+    params.require(:authentication).permit(:email, :password, :name, :token)
   end
 end
