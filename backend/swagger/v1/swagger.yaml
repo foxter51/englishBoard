@@ -218,32 +218,6 @@ paths:
       responses:
         '200':
           description: successful
-    post:
-      summary: Create a user
-      tags:
-      - Users
-      security:
-      - BearerAuth: []
-      parameters: []
-      responses:
-        '200':
-          description: successful
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
-              required:
-              - name
-              - email
-              - password
   "/users/{id}":
     parameters:
     - name: id

@@ -19,32 +19,6 @@ RSpec.describe 'users', type: :request do
         run_test!
       end
     end
-
-    post('Create a user') do
-      tags 'Users'
-      security [{ BearerAuth: [] }]
-      response(200, 'successful') do
-        consumes 'application/json'
-        parameter name: :user, in: :body, schema: {
-          type: :object,
-          properties: {
-            name: { type: :string },
-            email: { type: :string },
-            password: { type: :string }
-          },
-          required: %w[name email password]
-        }
-
-        after do |example|
-          example.metadata[:response][:content] = {
-            'application/json' => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
-          }
-        end
-        run_test!
-      end
-    end
   end
 
   path '/users/{id}' do

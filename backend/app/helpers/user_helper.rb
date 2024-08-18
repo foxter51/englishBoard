@@ -8,7 +8,7 @@ module UserHelper
 
   def fetching_users
     fetch_or_cache('all_users') do
-      User.all.to_json
+      User.without(:password_diggest).all.to_json
     end
   end
 end

@@ -27,24 +27,22 @@ class User
     BCrypt::Password.new(password_diggest) == password
   end
 
-  def self.from_omniauth(auth)
-    user = find_by(provider: auth.provider, uid: auth.uid)
+  def self.from_googleauth(auth)
+    user = find_by(email: auth[:info][:email]) if exists?(email: auth[:info][:email])
 
-    unless user
-      user = find_by(email: auth.info.email)
-      if user
-        user.update(uid: auth.uid) unless user.uid.present?
-      else
-        user = new(
-          provider: auth.provider,
-          uid: auth.uid,
-          email: auth.info.email,
-          name: auth.info.name,
-          avatar: auth.info.image
-        )
-        user.save
-      end
+    if user
+      user.update(uid: auth[:uid]) unless user.uid.present?
+    else
+      user = new(
+        provider: auth[:provider],
+        uid: auth[:uid],
+        email: auth[:info][:email],
+        name: auth[:info][:name],
+        avatar: auth[:info][:image]
+      )
+      user.save
     end
+
     user
   end
 
