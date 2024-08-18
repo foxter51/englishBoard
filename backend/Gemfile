@@ -6,7 +6,9 @@ gem 'bcrypt'
 
 gem 'dotenv'
 
-gem 'google-id-token'
+gem 'googleauth'
+
+gem 'google-apis-oauth2_v2'
 
 gem 'lograge'
 

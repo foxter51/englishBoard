@@ -10,9 +10,9 @@ class AuthenticationController < ApplicationController
       token = jwt_encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
       Rails.logger.info("Authenticated user: #{@user.email}")
-      render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
+      render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
     else
-      render json: { error: 'unauthorized' }, status: :unauthorized
+      render json: { error: 'Invalid email or password' }, status: :unauthorized
     end
   rescue Mongoid::Errors::InvalidFind, Mongoid::Errors::DocumentNotFound
     render json: { error: 'User not found' }, status: :unauthorized
@@ -24,46 +24,52 @@ class AuthenticationController < ApplicationController
       token = jwt_encode(user_id: @user.id)
       time = Time.now + 24.hours.to_i
       Rails.logger.info("Registered user: #{@user.email}")
-      render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :created
+      render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def google_oauth2_callback
-    token = params[:token].to_s
-    validator = GoogleIDToken::Validator.new
-    aud = ENV['GOOGLE_CLIENT_ID']
-    payload = validator.check(token, aud)
+    credentials = Google::Auth::UserRefreshCredentials.new(
+      client_id: ENV['GOOGLE_CLIENT_ID'],
+      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+      scope: %w[email profile],
+      access_token: params[:token].to_s
+    )
 
-    if payload['sub'].present?
-      @user = User.from_omniauth({
-                                   provider: 'google_oauth2',
-                                   uid: payload['sub'],
-                                   info: {
-                                     email: payload['email'],
-                                     name: payload['name'],
-                                     image: payload['picture']
-                                   }
-                                 })
+    oauth2 = Google::Apis::Oauth2V2::Oauth2Service.new
+    oauth2.authorization = credentials
+    user_info = oauth2.get_userinfo_v2
 
-      if @user.persisted?
-        token = jwt_encode(user_id: @user.id)
-        time = Time.now + 24.hours.to_i
-        Rails.logger.info("Authenticated user: #{@user.email}")
-        render json: { token: token, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
-      else
-        render json: @user.errors, status: :unprocessable_entity
-      end
+    @user = User.from_googleauth(
+      provider: 'google_oauth2',
+      uid: user_info.id,
+      info: {
+        email: user_info.email,
+        name: user_info.name,
+        image: user_info.picture
+      }
+    )
+
+    if @user.persisted?
+      token = jwt_encode(user_id: @user.id)
+      time = Time.now + 24.hours.to_i
+      Rails.logger.info("Authenticated user: #{@user.email}")
+      render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), user_id: @user.id }, status: :ok
     else
-      render json: { error: 'Invalid Google ID token' }, status: :unauthorized
+      render json: @user.errors, status: :unprocessable_entity
     end
-  rescue GoogleIDToken::ValidationError => e
+  rescue Google::Apis::AuthorizationError => e
+    Rails.logger.error("Google Authorization Error: #{e.message}")
+    render json: { error: e.message }, status: :unauthorized
+  rescue StandardError => e
+    Rails.logger.error("Unexpected error: #{e.message}")
     render json: { error: e.message }, status: :unauthorized
   end
 
   def logout
-    Rails.logger.info("Logged out user: #{@current_user.email}")
+    Rails.logger.info("Logged out user: #{@current_user.email}") if @current_user
     @current_user = nil
     render json: { message: 'Logged out successfully' }, status: :ok
   end

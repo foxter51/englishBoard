@@ -16,17 +16,6 @@ class UsersController < ApplicationController
     render json: @user
   end
 
-  def create
-    @user = User.new(user_params)
-    if @user.save
-      Rails.logger.info("User created: #{@user.inspect}")
-      render json: @user, status: :created
-    else
-      Rails.logger.error("User not created: #{@user.errors.full_messages}")
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
   def update
     if @user.update(user_params)
       Rails.logger.info("User updated: #{@user.inspect}")
@@ -46,7 +35,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:id])
+    @user = User.without(:password_diggest).find(params[:id])
   rescue Mongoid::Errors::DocumentNotFound
     Rails.logger.error("User not found: #{params[:id]}")
     render json: { error: 'User not found' }, status: :not_found
