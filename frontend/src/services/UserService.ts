@@ -13,6 +13,19 @@ class UserService {
             throw err
         }
     }
+    
+    async updateUser(id: string, field: Partial<UserResponse>) {
+        try {
+            return await request<UserResponse>(
+                'PATCH',
+                `/users/${id}`,
+                field
+            )
+        } catch (err) {
+            console.log(err)
+            throw err
+        }
+    }
 }
 
 export default new UserService()
