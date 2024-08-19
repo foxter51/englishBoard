@@ -8,18 +8,22 @@ class UsersController < ApplicationController
   def index
     @users = fetching_users
     Rails.logger.info("Users found count: #{@users.size}")
-    render json: @users
+    render json: @users.as_json(except: :password_diggest)
   end
 
   def show
     Rails.logger.info("User found: #{@user.inspect}")
-    render json: @user
+    render json: @user.as_json(except: :password_diggest)
   end
 
   def update
-    if @user.update(user_params)
+    unless params[:password].blank?
+      @user.password = params[:password]
+      @user.save
+    end
+    if @user.update(user_params_without_password)
       Rails.logger.info("User updated: #{@user.inspect}")
-      render json: @user
+      render json: @user.as_json(except: :password_diggest)
     else
       Rails.logger.error("User not updated: #{@user.errors.full_messages}")
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -35,7 +39,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.without(:password_diggest).find(params[:id])
+    @user = User.find(params[:id])
   rescue Mongoid::Errors::DocumentNotFound
     Rails.logger.error("User not found: #{params[:id]}")
     render json: { error: 'User not found' }, status: :not_found
@@ -43,5 +47,9 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :name, :avatar)
+  end
+
+  def user_params_without_password
+    params.permit(:email, :name, :avatar)
   end
 end
