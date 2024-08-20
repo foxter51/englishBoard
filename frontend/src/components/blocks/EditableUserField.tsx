@@ -48,7 +48,7 @@ export default function EditableUserField({ type, placeholder, label, field, use
             <div className='flex flex-row items-center justify-between'>
                 <Input  ref={ inputRef } type={ type } placeholder={ placeholder } id={ label }
                         minLength={ minLength } maxLength={ maxLength }
-                        onChange={ () => setError(null) } className='w-72 me-1' />
+                        onChange={ () => setError(null) } className='w-72 me-2' />
                 <Button type='submit'>
                     <FontAwesomeIcon icon={ faWandMagicSparkles } />
                 </Button>

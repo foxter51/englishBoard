@@ -13,7 +13,7 @@ const routeNames: Record<string, string> = {
   '': 'Eng Board',
   'auth': 'Authorization',
   'users': 'User Profile',
-};
+}
 
 const Layout = () => {
   const location = useLocation().pathname
@@ -21,8 +21,8 @@ const Layout = () => {
   return (
     <Fragment>
       <Header currentTab={ routeNames[firstPathPart] } />
-      <div className="flex h-screen w-screen justify-center">
-        <div className="max-w-full max-h-full">
+      <div className='flex h-screen w-screen justify-center'>
+        <div className='max-w-full max-h-full'>
           <GoogleOAuthProvider clientId={ import.meta.env.VITE_GOOGLE_CLIENT_ID }>
             <Outlet />
           </GoogleOAuthProvider>
@@ -35,7 +35,7 @@ const Layout = () => {
 const PrivateRoute = ({ children }: { children: JSX.Element }): JSX.Element => {
   const isAuthenticated = AuthService.isAuthenticated()
 
-  return isAuthenticated ? children : <Navigate to="/auth" />
+  return isAuthenticated ? children : <Navigate to='/auth' />
 }
 
 createRoot(document.getElementById('root')!).render(
