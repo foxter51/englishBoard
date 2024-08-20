@@ -4,8 +4,9 @@ import { UserResponse } from '../responses/UsersResponses'
 import UserService from '../services/UserService'
 import LoadingEffect from '../components/effects/LoadingEffect'
 import Avatar from 'react-avatar'
-import EditableUserField from '../components/blocks/EditableUserField'
 import AuthService from '../services/AuthService'
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover'
+import UserDetailsPopover from '../components/blocks/UserDetailsPopover'
 
 export default function UserPage() {
 
@@ -40,7 +41,7 @@ export default function UserPage() {
     }
     
     return (
-        <div className='grid grid-rows-6 gap-4'>
+        <div className='grid grid-rows-3 gap-4'>
             <div className='flex flex-row items-center mb-5'>
                 { user?.avatar &&
                     <img className='w-10 h-10 rounded-full me-2' src={ user?.avatar } alt={ user?.name }></img>
@@ -56,48 +57,19 @@ export default function UserPage() {
             </div>
 
             { isSelf &&
-                <>
-                    <EditableUserField
-                        type='text'
-                        placeholder={ `${user?.name}` }
-                        label='Name'
-                        field='name'
-                        user={ user! }
-                        setUser={ setUser }
-                        minLength={ 3 }
-                        maxLength={ 64 }
-                    />
-                    { user?.provider === 'email' &&
-                        <>
-                            <EditableUserField
-                                type='email'
-                                placeholder={ `${user?.email}` }
-                                label='Email'
-                                field='email'
-                                user={ user }
+                <div className='flex flex-row justify-center'>
+                    <Popover>
+                        <PopoverTrigger className='cursor-pointer bg-white border border-black max-w-44'>
+                            My personal info
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <UserDetailsPopover
+                                user={ user! }
                                 setUser={ setUser }
                             />
-                            <EditableUserField
-                                type='password'
-                                placeholder=''
-                                label='Password'
-                                field='password'
-                                user={ user }
-                                setUser={ setUser }
-                                minLength={ 6 }
-                                maxLength={ 64 }
-                            />
-                        </>
-                    }
-                    <EditableUserField
-                        type='text'
-                        placeholder='Enter prompt to generate avatar'
-                        label='Avatar'
-                        field='avatar'
-                        user={ user! }
-                        setUser={ setUser }
-                    />
-                </>
+                        </PopoverContent>
+                    </Popover>
+                </div>
             }
         </div>
     )
