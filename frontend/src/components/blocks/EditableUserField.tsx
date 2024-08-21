@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { EditableFieldProps } from '../../models/EditableFieldProps'
+import { EditableFieldProps } from '../../props/EditableFieldProps'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
