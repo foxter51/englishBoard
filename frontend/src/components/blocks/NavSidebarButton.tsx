@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
-import { NavSidebarButtonProps } from '../../models/NavSidebarButtonProps'
+import { NavSidebarButtonProps } from '../../props/NavSidebarButtonProps'
 
 export default function NavSidebarButton({ link, buttonName, setSidebarActive }: Readonly<NavSidebarButtonProps>) {
     return (

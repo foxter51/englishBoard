@@ -1,4 +1,4 @@
-import { UserDetailsPopoverProps } from '../../models/UserDetailsPopoverProps';
+import { UserDetailsPopoverProps } from '../../props/UserDetailsPopoverProps';
 import EditableUserField from './EditableUserField';
 
 export default function UserDetailsPopover({ user, setUser }: Readonly<UserDetailsPopoverProps>) {

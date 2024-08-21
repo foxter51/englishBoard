@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import AuthService from '../../services/AuthService'
-import { SidebarProps } from '../../models/SidebarProps'
+import { SidebarProps } from '../../props/SidebarProps'
 import { ArrowUpLeft } from 'lucide-react'
 import { Separator } from '../ui/separator'
 import NavSidebarButton from './NavSidebarButton'
