@@ -6,7 +6,7 @@ class User
   include Mongoid::Timestamps
   field :name, type: String
   field :email, type: String
-  field :password_diggest, type: String
+  field :password, type: String
   field :avatar, type: String
   field :provider, type: String, default: 'email'
   field :uid, type: String
@@ -19,12 +19,10 @@ class User
   validates :email, uniqueness: true, presence: true
   validates :password, length: { minimum: 6, maximum: 64 }, presence: true, if: :password_required?
 
-  attr_accessor :password
+  before_save :encrypt_password, if: :password_required?
 
-  before_save :encrypt_password, if: :provider == 'email'
-
-  def authenticate(password)
-    BCrypt::Password.new(password_diggest) == password
+  def authenticate(given_password)
+    BCrypt::Password.new(password) == given_password
   end
 
   def self.from_googleauth(auth)
@@ -49,10 +47,10 @@ class User
   private
 
   def password_required?
-    (new_record? && provider == 'email') || password.present?
+    (new_record? && provider == 'email') || password_changed?
   end
 
   def encrypt_password
-    self.password_diggest = BCrypt::Password.create(password) if password.present?
+    self.password = BCrypt::Password.create(password)
   end
 end

@@ -8,22 +8,18 @@ class UsersController < ApplicationController
   def index
     @users = fetching_users
     Rails.logger.info("Users found count: #{@users.size}")
-    render json: @users.as_json(except: :password_diggest)
+    render json: @users.as_json(except: :password)
   end
 
   def show
     Rails.logger.info("User found: #{@user.inspect}")
-    render json: @user.as_json(except: :password_diggest)
+    render json: @user.as_json(except: :password)
   end
 
   def update
-    unless params[:password].blank?
-      @user.password = params[:password]
-      @user.save
-    end
-    if @user.update(user_params_without_password)
+    if @user.update(user_params)
       Rails.logger.info("User updated: #{@user.inspect}")
-      render json: @user.as_json(except: :password_diggest)
+      render json: @user.as_json(except: :password)
     else
       Rails.logger.error("User not updated: #{@user.errors.full_messages}")
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -47,9 +43,5 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password, :name, :avatar)
-  end
-
-  def user_params_without_password
-    params.permit(:email, :name, :avatar)
   end
 end
